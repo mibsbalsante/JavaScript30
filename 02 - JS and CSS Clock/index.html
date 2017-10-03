@@ -62,13 +62,36 @@
       background:black;
       position: absolute;
       top:50%;
+
+      transform-origin: 100%; /* the same as transform-origin: right;*/
+      transform: rotate(90deg);
+      transition: all .05s cubic-bezier(.1, 2.5, .5, 1)
     }
 
   </style>
 
   <script>
+    const setDate = () => {
+      const degreesToStartAtTop = 90,
+            now = new Date(),
+            secondsDegrees = now.getSeconds() * 6 + degreesToStartAtTop,
+            minsDegrees = now.getMinutes() * 6 + degreesToStartAtTop,
+            hoursDegrees = now.getHours() * 30 + degreesToStartAtTop
 
+      hands.second.style.transform = `rotate(${secondsDegrees}deg)`
+      hands.min.style.transform = `rotate(${minsDegrees}deg)`
+      hands.hour.style.transform = `rotate(${hoursDegrees}deg)`
+    }
 
+    const hands = {
+      second: document.querySelector('.second-hand'),
+      min: document.querySelector('.min-hand'),
+      hour: document.querySelector('.hour-hand')
+    }
+
+    setInterval(setDate, 1000)
+    setDate()
+    
   </script>
 </body>
 </html>
