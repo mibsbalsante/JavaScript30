@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+  <script>
+    const searchInput = document.querySelector('.search'),
+          suggestions = document.querySelector('.suggestions'),
+          endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json',
+          cities = []
+
+    const numberWithCommas = (x) => {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    const createListItem = (place, word) => {
+      const regex = new RegExp(word, 'gi')
+      const cityName = place.city.replace(regex, `<span class="hl">${word}</span>`)
+      const stateName = place.state.replace(regex, `<span class="hl">${word}</span>`)
+      return `
+        <li>
+          <span class="name">${cityName}, ${stateName}</span>
+          <span class="population">${numberWithCommas(place.population)}</span>
+        </li>
+      `
+    }
+
+    const findMatches = word => {
+      const regex = new RegExp(word, 'gi')
+      return cities.filter(place => place.city.match(regex) || place.state.match(regex))
+
+    }
+
+    const displayMatches = event => {
+      const matchArray = findMatches(event.target.value)
+      suggestions.innerHTML = matchArray.map(place => createListItem(place, event.target.value)).join('')
+    }
+
+    searchInput.addEventListener('input', displayMatches)
+
+    fetch(endpoint)
+      .then(dt => dt.json())
+      .then(dt => cities.push(...dt))
+  </script>
+  </body>
+</html>
